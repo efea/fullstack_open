@@ -50,14 +50,14 @@ const App = () => {
         id: 3,
       },
       {
-        name: "Test for adding extra part, part",
+        name: "Test for adding extra part,part",
         exercises:23,
         id: 4
       }
     ],
-  }
+  };
 
   return <Course course={course} />
-};
+}
 
-export default App;
+export default App

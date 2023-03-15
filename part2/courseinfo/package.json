@@ -1,5 +1,5 @@
 {
-  "name": "course_information",
+  "name": "courseinfo",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
