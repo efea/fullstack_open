@@ -1,8 +1,7 @@
 import { useState } from 'react'
-
-const DisplayPerson = (props) => {
-  return <div>{props.person.name} {props.person.number}</div>
-};
+import Persons from "./components/Persons"
+import Filter from "./components/Filter"
+import PersonForm from "./components/PersonForm"
 
 const App = () => {
   const [persons, setPersons] = useState([
@@ -11,27 +10,31 @@ const App = () => {
     { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
     { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }
   ])
-  const [newName, setName] = useState('')
-  const [newNumber, setNumber] = useState('')
+  //const [newName, setName] = useState('')
+  //const [newNumber, setNumber] = useState('')
   const [filter, setFilter] = useState('')
   const [personList, setPersonList] = useState(persons)
+  const [newPerson, setNewPerson] = useState({name: "", number: ""})
 
   const AddPerson = (event) => {
     event.preventDefault()
-    const personObject = {
-      name: newName,
-      number: newNumber
-    };
-    if (persons.find(person => person.name === newName) !== undefined) {
-      alert(`${newName} is already added to phonebook`)
+    
+    if (persons.find(person => person.name === newPerson.name) !== undefined) {
+      alert(`${newPerson.name} is already added to phonebook`)
     }
     else {
-      setPersons(persons.concat(personObject))
-      setPersonList(persons.concat(personObject))
-      setName("")
-      setNumber("")
+      setPersons(persons.concat(newPerson))
+      setPersonList(persons.concat(newPerson))
+      //setName("")
+      //setNumber("")
+      setNewPerson({name: "", number: ""})
     }
   }
+
+  const onChangeHandler = (event) => {
+    const { name, value } = event.target;
+    setNewPerson({ ...newPerson, [name]: value });
+  };
 
   const FilterPerson = (event) => {
     const filtStr = event.target.value
@@ -43,7 +46,7 @@ const App = () => {
   }
 
 
-
+/*
   const NameChangeHandler = (event) => {
     setName(event.target.value);
   }
@@ -51,31 +54,15 @@ const App = () => {
   const NumberChangeHandler = (event) => {
     setNumber(event.target.value)
   }
-
+*/
   return (
     <div>
       <h2>Phonebook</h2>
-      <div>
-        filter shown with
-        <input value={filter} onChange={FilterPerson}></input>
-      </div>
-      <form onSubmit={AddPerson}>
-        <div>
-          name: <input value={newName} onChange={NameChangeHandler} />
-        </div>
-        <div>
-          number: <input value={newNumber} onChange={NumberChangeHandler}/>
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
+      <Filter filter={filter} FilterPerson={FilterPerson} />
+      <PersonForm AddPerson={AddPerson} newPerson={newPerson}
+        event_onChange={onChangeHandler}/>
       <h2>Numbers</h2>
-      <div>
-        {personList.map((person) => (
-          <DisplayPerson key={person.name} person={person} />
-        ))}
-      </div>
+      <Persons personList={personList} />
     </div>
   )
 }
