@@ -13,20 +13,45 @@ const App = () => {
   const [personList, setPersonList] = useState(persons)
   const [newPerson, setNewPerson] = useState({ name: "", number: "" })
 
-  const AddPerson = (event) => {
+  function AddPerson (event) {
     event.preventDefault()
-
-    if (persons.find(person => person.name === newPerson.name) !== undefined) {
-      alert(`${newPerson.name} is already added to phonebook`)
-    }
-    else {
-      Service.create(newPerson)
-        .then((personFromDB) => {
-          setPersons(persons.concat(personFromDB))
-          setPersonList(personList.concat(personFromDB))
-        })
-    }
-    setNewPerson({ name: "", number: "" })
+  
+      if (persons.find(person => person.name === newPerson.name) !== undefined) {
+        //alert(`${newPerson.name} is already added to phonebook`)
+        if(window.confirm(newPerson.name + " is already added to phonebook, replace old number with a new one?")){
+          const existingPerson = persons.find(person => person.name === newPerson.name)
+          
+          console.log("existing person is: ",existingPerson)
+          console.log("new person is: ", newPerson)
+          
+          Service.update(existingPerson.id, newPerson).
+          then((personFromDB => {
+            console.log("promise from update fulfilled.")
+            
+            //if od dont match, dont change anything
+            //if ids match, replace with the data coming from db.
+            const upToDate = persons.map((person) =>
+            person.id !== personFromDB.id ? person : personFromDB
+  
+  
+            )
+  
+            setPersonList(upToDate)
+            setPersons(upToDate)
+          }))
+  
+  
+        }
+        
+      }
+      else {
+        Service.create(newPerson)
+          .then((personFromDB) => {
+            setPersons(persons.concat(personFromDB))
+            setPersonList(personList.concat(personFromDB))
+          })
+      }
+      setNewPerson({ name: "", number: "" })
   }
 
   const onChangeHandler = (event) => {
