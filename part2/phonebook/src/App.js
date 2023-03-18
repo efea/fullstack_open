@@ -9,7 +9,7 @@ const App = () => {
   const [persons, setPersons] = useState([])
   //const [newName, setName] = useState('')
   //const [newNumber, setNumber] = useState('')
-  const [filter, setFilter] = useState('')
+  const [filter, setFilter] = useState("")
   const [personList, setPersonList] = useState(persons)
   const [newPerson, setNewPerson] = useState({ name: "", number: "" })
 
@@ -20,20 +20,6 @@ const App = () => {
       alert(`${newPerson.name} is already added to phonebook`)
     }
     else {
-      /*setPersons(persons.concat(newPerson))
-      setPersonList(persons.concat(newPerson))
-      //setName("")
-      //setNumber("")
-      setNewPerson({name: "", number: ""})*/
-
-      /*
-      axios
-      .post("http://localhost:3001/persons", newPerson)
-      .then((response) => {
-        setPersons(persons.concat(newPerson));
-        setPersonList(personList.concat(newPerson));
-      });*/
-
       Service.create(newPerson)
         .then((personFromDB) => {
           setPersons(persons.concat(personFromDB))
@@ -50,25 +36,11 @@ const App = () => {
 
   const FilterPerson = (event) => {
     const filtStr = event.target.value
-    //console.log(filtStr);
     setFilter(filtStr)
-    //const someName = persons[0].name.toLowerCase()
-    //console.log("first name is,", someName);
     setPersonList(persons.filter(person => person.name.toLowerCase().includes(filtStr)))
   }
-  /*
-  useEffect(() => {
-    console.log('effect')
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        console.log('promise fulfilled')
-        setPersonList(response.data)
-        setPersons(response.data);
-      })
-  }, [])*/
-  //get everything from db to render.
 
+  //get everything from db to render.
   useEffect(() => {
     console.log('effect')
     Service.getAll()
@@ -77,8 +49,18 @@ const App = () => {
         setPersons(allFromDB)
         setPersonList(allFromDB)
       })
-  })
+  }, [])
 
+  const removePerson = (id, name) => {
+    if(window.confirm("remove " + name + " from the db?")){
+      Service.remove(id).
+      then((response => {
+        const uptodate = persons.filter((person) => person.id !== id)
+        setPersons(uptodate)
+        setPersonList(uptodate)
+      }))
+    }
+  }
 
   console.log("render", personList.length, "persons");
   return (
@@ -88,7 +70,7 @@ const App = () => {
       <PersonForm AddPerson={AddPerson} newPerson={newPerson}
         event_onChange={onChangeHandler} />
       <h2>Numbers</h2>
-      <Persons personList={personList} />
+      <Persons personList={personList} removePerson={removePerson}/>
     </div>
   )
 }
