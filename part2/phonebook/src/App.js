@@ -3,6 +3,7 @@ import axios from 'axios'
 import Persons from "./components/Persons"
 import Filter from "./components/Filter"
 import PersonForm from "./components/PersonForm"
+import Service from "./services/persons"
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -10,11 +11,11 @@ const App = () => {
   //const [newNumber, setNumber] = useState('')
   const [filter, setFilter] = useState('')
   const [personList, setPersonList] = useState(persons)
-  const [newPerson, setNewPerson] = useState({name: "", number: ""})
+  const [newPerson, setNewPerson] = useState({ name: "", number: "" })
 
   const AddPerson = (event) => {
     event.preventDefault()
-    
+
     if (persons.find(person => person.name === newPerson.name) !== undefined) {
       alert(`${newPerson.name} is already added to phonebook`)
     }
@@ -24,13 +25,22 @@ const App = () => {
       //setName("")
       //setNumber("")
       setNewPerson({name: "", number: ""})*/
+
+      /*
       axios
       .post("http://localhost:3001/persons", newPerson)
       .then((response) => {
         setPersons(persons.concat(newPerson));
         setPersonList(personList.concat(newPerson));
-      });
+      });*/
+
+      Service.create(newPerson)
+        .then((personFromDB) => {
+          setPersons(persons.concat(personFromDB))
+          setPersonList(personList.concat(personFromDB))
+        })
     }
+    setNewPerson({ name: "", number: "" })
   }
 
   const onChangeHandler = (event) => {
@@ -46,7 +56,7 @@ const App = () => {
     //console.log("first name is,", someName);
     setPersonList(persons.filter(person => person.name.toLowerCase().includes(filtStr)))
   }
-
+  /*
   useEffect(() => {
     console.log('effect')
     axios
@@ -56,15 +66,27 @@ const App = () => {
         setPersonList(response.data)
         setPersons(response.data);
       })
-  }, [])
+  }, [])*/
+  //get everything from db to render.
 
-  console.log("render", personList.length , "persons");
+  useEffect(() => {
+    console.log('effect')
+    Service.getAll()
+      .then((allFromDB) => {
+        console.log('promise fulfilled')
+        setPersons(allFromDB)
+        setPersonList(allFromDB)
+      })
+  })
+
+
+  console.log("render", personList.length, "persons");
   return (
     <div>
       <h2>Phonebook</h2>
       <Filter filter={filter} FilterPerson={FilterPerson} />
       <PersonForm AddPerson={AddPerson} newPerson={newPerson}
-        event_onChange={onChangeHandler}/>
+        event_onChange={onChangeHandler} />
       <h2>Numbers</h2>
       <Persons personList={personList} />
     </div>
