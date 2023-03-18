@@ -9,27 +9,7 @@ const Persons = ({ personList, removePerson }) => {
                     </button>
                     </div>
                 ))}
-
-
-
         </div>
-
-
-
-
     )
-
 }
-
 export default Persons
-/*
-{ personList.map((person) => {
-    <div key={person.name} person={person}>
-    {personList.map((person) => (
-        {person.name} {person.number} {" "}
-        
-        <button onClick={() => removePerson(person.id, person.name)}>
-            delete
-        </button>
-        </div>
-    ))}*/
