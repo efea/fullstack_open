@@ -4,6 +4,7 @@ import Persons from "./components/Persons"
 import Filter from "./components/Filter"
 import PersonForm from "./components/PersonForm"
 import Service from "./services/persons"
+import Notification from './components/Notification'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -12,6 +13,7 @@ const App = () => {
   const [filter, setFilter] = useState("")
   const [personList, setPersonList] = useState(persons)
   const [newPerson, setNewPerson] = useState({ name: "", number: "" })
+  const [message, setMessage] = useState(null)
 
   function AddPerson (event) {
     event.preventDefault()
@@ -38,6 +40,7 @@ const App = () => {
   
             setPersonList(upToDate)
             setPersons(upToDate)
+            setMessage("Updated " + newPerson.name)
           }))
   
   
@@ -49,6 +52,8 @@ const App = () => {
           .then((personFromDB) => {
             setPersons(persons.concat(personFromDB))
             setPersonList(personList.concat(personFromDB))
+            setMessage("Added " + newPerson.name)
+
           })
       }
       setNewPerson({ name: "", number: "" })
@@ -76,6 +81,12 @@ const App = () => {
       })
   }, [])
 
+  useEffect(() => {
+    setTimeout(() => {
+      setMessage(null);
+    }, 5000);
+  }, [message]);
+
   const removePerson = (id, name) => {
     if(window.confirm("remove " + name + " from the db?")){
       Service.remove(id).
@@ -91,6 +102,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message} />
       <Filter filter={filter} FilterPerson={FilterPerson} />
       <PersonForm AddPerson={AddPerson} newPerson={newPerson}
         event_onChange={onChangeHandler} />
