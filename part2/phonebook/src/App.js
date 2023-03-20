@@ -34,18 +34,17 @@ const App = () => {
             //if ids match, replace with the data coming from db.
             const upToDate = persons.map((person) =>
             person.id !== personFromDB.id ? person : personFromDB
-  
-  
             )
-  
             setPersonList(upToDate)
             setPersons(upToDate)
             setMessage("Updated " + newPerson.name)
           }))
-  
-  
-        }
-        
+          //this is the last place in the promise chain. catch the exception is promise not fullfilled
+          .catch((error) => {
+            setMessage("Information of " + newPerson.name + "has already been removed from server.")
+          })
+
+        } 
       }
       else {
         Service.create(newPerson)
@@ -57,6 +56,7 @@ const App = () => {
           })
       }
       setNewPerson({ name: "", number: "" })
+    
   }
 
   const onChangeHandler = (event) => {

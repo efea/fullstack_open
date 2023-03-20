@@ -3,11 +3,19 @@ const Notification = ({ message }) => {
     return null
   }
 
+  if(!message.includes("Information")){
   return (
-    <div className='error'>
+    <div className='successNotification'>
       {message}
     </div>
   )
+  }
+  return (
+    <div className='errorNotification'>
+      {message}
+    </div>
+  )
+  
 }
 
 export default Notification
